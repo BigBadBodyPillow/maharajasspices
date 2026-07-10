@@ -1,64 +1,137 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
+  import { onDestroy, onMount } from 'svelte';
 
-  export let images: Array<Object>;
+  import chevronIcon from '../assets/icons/glyphs--chevron-bold.svg?raw';
+
+  type HeroImage = {
+    id: string;
+    path: string;
+    heading?: string;
+    p?: string;
+  };
+
+  export let images: HeroImage[] = [];
   export let imageWidth = 300;
   export let imageSpacing = 20;
   export let speed = 500;
-  export let controlColor = '#444';
-  export let controlScale = '0.5';
+
+  const AUTO_ROTATE_DELAY = 3000;
+  let activeIndex = 0;
+  let orderedImages: HeroImage[] = [];
+  let currentImage: HeroImage | undefined;
+  let autoRotateInterval: number | undefined;
+
+  $: orderedImages = images.length
+    ? [...images.slice(activeIndex), ...images.slice(0, activeIndex)]
+    : [];
+  $: currentImage = images.length ? images[activeIndex % images.length] : undefined;
+
+  const setImageOpacity = (id: string, value: string) => {
+    const imageElement = document.getElementById(id);
+
+    if (imageElement) {
+      imageElement.style.opacity = value;
+    }
+  };
+
+  const stopAutoRotate = () => {
+    if (autoRotateInterval !== undefined) {
+      clearInterval(autoRotateInterval);
+      autoRotateInterval = undefined;
+    }
+  };
+
+  const startAutoRotate = () => {
+    stopAutoRotate();
+
+    autoRotateInterval = setInterval(() => {
+      rotateRight();
+    }, AUTO_ROTATE_DELAY);
+  };
+
+  const resetAutoRotate = () => {
+    stopAutoRotate();
+    startAutoRotate();
+  };
+
+  const goToIndex = (index: number) => {
+    if (images.length === 0) return;
+    activeIndex = index % images.length;
+    resetAutoRotate();
+  };
 
   const rotateLeft = () => {
-    const transitioningImage = images[images.length - 1];
-    document.getElementById(transitioningImage.id).style.opacity = 0;
-    images = [images[images.length - 1], ...images.slice(0, images.length - 1)];
-    setTimeout(() => (document.getElementById(transitioningImage.id).style.opacity = 1), speed);
+    if (images.length === 0) return;
+    const transitioningImage = orderedImages[orderedImages.length - 1];
+
+    setImageOpacity(transitioningImage.id, '0');
+    activeIndex = (activeIndex - 1 + images.length) % images.length;
+    setTimeout(() => setImageOpacity(transitioningImage.id, '1'), speed);
+    resetAutoRotate();
   };
 
   const rotateRight = () => {
-    const transitioningImage = images[0];
-    document.getElementById(transitioningImage.id).style.opacity = 0;
-    images = [...images.slice(1, images.length), images[0]];
-    setTimeout(() => (document.getElementById(transitioningImage.id).style.opacity = 1), speed);
+    if (images.length === 0) return;
+    const transitioningImage = orderedImages[0];
+
+    setImageOpacity(transitioningImage.id, '0');
+    activeIndex = (activeIndex + 1) % images.length;
+    setTimeout(() => setImageOpacity(transitioningImage.id, '1'), speed);
+    resetAutoRotate();
   };
+
+  onMount(startAutoRotate);
+  onDestroy(stopAutoRotate);
 </script>
 
 <div id="carousel-container">
   <div id="carousel-images">
-    {#each images as image (image.id)}
+    {#each orderedImages as image (image.id)}
       <img
         src={image.path}
         alt={image.id}
         id={image.id}
         style={`width:${imageWidth}px; margin: 0 ${imageSpacing}px;`}
         animate:flip={{ duration: speed }}
+        loading="lazy"
       />
     {/each}
   </div>
-  <button id="left" on:click={rotateLeft}>
+
+  <div class="w-full h-full absolute top-0">
+    <div class="hero-text box mx-auto h-full">
+      <div class="mx-25 h-full flex flex-col justify-center gap-4 animate-fade-in">
+        <div>
+          <h1 class="text-4xl font-bold">{currentImage?.heading ?? 'Lorem, ipsum dolor.'}</h1>
+          <p class="text-xl">
+            {currentImage?.p ?? 'Lorem ipsum, dolor sit amet consectetur adipisicing elit.'}
+          </p>
+        </div>
+        <button class="bg-(--accent) font-bold w-fit px-4 py-2 rounded-md">SHOP NOW</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="carousel-markers">
+    {#each images as _, index}
+      <button
+        class={`marker ${index === activeIndex ? 'active' : ''}`}
+        onclick={() => goToIndex(index)}
+        aria-label={`go to image ${index + 1}`}
+      ></button>
+    {/each}
+  </div>
+
+  <button id="left" onclick={rotateLeft} class="control">
     <slot name="left-control">
-      <svg width="39px" height="110px" id="svg8" transform={`scale(${controlScale})`}>
-        <g id="layer1" transform="translate(-65.605611,-95.36949)">
-          <path
-            style={`fill:none;stroke:${controlColor};stroke-width:9.865;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1`}
-            d="m 99.785711,100.30199 -23.346628,37.07648 c -7.853858,12.81098 -7.88205,12.81098 0,24.78902 l 23.346628,37.94647"
-            id="path1412"
-          />
-        </g>
-      </svg>
+      <span class="text-white -rotate-90 p-3.5 [&_svg]:size-5">{@html chevronIcon}</span>
     </slot>
   </button>
-  <button id="right" on:click={rotateRight}>
-    <slot name="right-control">
-      <svg width="39px" height="110px" id="svg8" transform={`rotate(180) scale(${controlScale})`}>
-        <g id="layer1" transform="translate(-65.605611,-95.36949)">
-          <path
-            style={`fill:none;stroke:${controlColor};stroke-width:9.865;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1`}
-            d="m 99.785711,100.30199 -23.346628,37.07648 c -7.853858,12.81098 -7.88205,12.81098 0,24.78902 l 23.346628,37.94647"
-            id="path1412"
-          />
-        </g>
-      </svg>
+
+  <button id="right" onclick={rotateRight} class="control">
+    <slot name="right-control  ">
+      <span class="text-white rotate-90 p-3.5 [&_svg]:size-5">{@html chevronIcon}</span>
     </slot>
   </button>
 </div>
@@ -75,22 +148,25 @@
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
-    -webkit-mask: linear-gradient(to right, transparent, black 40%, black 60%, transparent);
-    mask: linear-gradient(to right, transparent, black 40%, black 60%, transparent);
+    filter: opacity(50%);
   }
 
-  button {
+  .control {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: none;
+    border-radius: 100%;
+    background-color: rgba(0, 0, 0, 0.353);
+
+    &:hover {
+      background-color: black;
+    }
   }
 
-  button:focus {
+  .control:focus-visible {
     outline: auto;
   }
 
@@ -100,5 +176,32 @@
 
   #right {
     right: 10px;
+  }
+
+  #carousel-markers {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
+  }
+
+  .marker {
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    background: #d9d9d9d8;
+    transition: background-color 0.2s ease;
+
+    transition: width 0.2s ease-out;
+    &:hover {
+      background-color: white;
+    }
+  }
+
+  .marker.active {
+    width: 48px;
+    background: #dc2626;
   }
 </style>
