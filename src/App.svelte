@@ -7,8 +7,8 @@
   import Promotion from './lib/Promotion.svelte';
 
   import arrowIcon from './assets/icons/maki--arrow.svg?raw';
-  import heartIcon from './assets/icons/mdi--heart.svg?raw';
   import Featured from './lib/Featured.svelte';
+  import Footer from './lib/Footer.svelte';
 
   const images = [
     {
@@ -116,10 +116,22 @@
         <div class="w-125 mx-auto mt-3 text-center animate-fade-in stars"></div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <Values />
-        <Values />
-        <Values />
-        <Values />
+        <Values
+          title="Quality - No Compromise"
+          text="Quality is at the heart of everything we do from the spices we source to the people we hire. We take pride in delivering only the best because we know that every pinch of spice tells a story."
+        />
+        <Values
+          title="Integrity - Always Do What's Right"
+          text="We believe in doing the right thing, even when it's the hard thing. Whether it's in our sourcing, our workplace culture, or our customer relationships, integrity guides us."
+        />
+        <Values
+          title="Passion - Love in Every Layer"
+          text="We don't just make spices, we bring them to life. Our passion is deeply rooted in our culture, our people, and our purpose. It's in the warmth of our kitchens, the joy in our team, and the unforgettable flavors we share."
+        />
+        <Values
+          title="Innovation - Tradition with a Twist"
+          text="At Maharaja's Spices, we honor our roots while embracing the future. We're constantly experimenting, improving, and reimagining how we do things."
+        />
       </div>
     </div>
   </div>
@@ -128,17 +140,17 @@
     <div class="box mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       <div class="flex items-center justify-center">
         <div class="bg-(--accent) flex flex-col h-full rounded-lg p-12 gap-4 max-w-150">
-          <h3 class="text-2xl font-bold">Lorem, ipsum dolor.</h3>
+          <h3 class="text-2xl font-bold">About Maharajas Spices</h3>
           <div class="flex flex-col gap-4 text-lg">
             <p>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias maxime, ipsa tempore
-              ullam error quo omnis quia? Hic qui quidem nam cumque debitis nisi porro quae facere,
-              impedit animi, maiores repellendus sit aliquam sint voluptate fugit doloremque facilis
-              inventore tenetur.
+              Maharaja's Spices is a wholesale and manufacturing business specializing in the
+              development of premium-quality, authentic spices, seasonings, sauces, batters,
+              coatings, marinades, pastes, and more.
             </p>
             <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem, hic blanditiis
-              incidunt in error asperiores, natus facilis optio delectus ad quos unde? Possimus.
+              Founded in 2012 by Elaine Pillay, the business has grown from strength to strength by
+              delivering consistent quality, competitive pricing, and exceptional customer service
+              to the retail, food service, and manufacturing sectors.
             </p>
           </div>
           <a
@@ -163,8 +175,8 @@
   <div class="bg-[#f5f5f5] py-16">
     <div class="box mx-auto px-4">
       <div class="grid grid-colls-1 md:grid-cols-2 gap-6 mb-16">
-        <Promotion item="Lorem" text="Lorem ipsum dolor sit amet." price="R16.99" />
-        <Promotion item="Ipsum" text="Lorem ipsum dolor sit amet." price="R24.99" />
+        <Promotion item="Grains" text="Premium Quality Grains" price="R16.99" />
+        <Promotion item="Pastes & Rubs" text="Rich flavors for authentic cooking" price="R24.99" />
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div
@@ -186,13 +198,10 @@
             <div
               class="relative z-10 p-12 flex flex-col justify-center h-full text-primary-foreground"
             >
-              <h2 class="text-4xl font-bold mb-4 font-playfair animate-fade-in-up">
-                Lorem, ipsum.
-              </h2>
+              <h2 class="text-4xl font-bold mb-4 font-playfair animate-fade-in-up">Our Products</h2>
               <p class="text-lg mb-6 animate-fade-in-up">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vero nostrum id
-                repudiandae perferendis vitae fugiat reiciendis molestiae, ducimus error blanditiis
-                vel eligendi neque aut reprehenderit, deserunt velit labore sunt ipsam?
+                Maharaja's Spices are manufacturers of their products following high-quality
+                industry-standards
               </p>
               <a
                 class="inline-flex bg-(--accent) items-center justify-center gap-2 text-sm [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 font-bold uppercase transition-all hover:scale-105 h-11 rounded-md px-8 w-fit"
@@ -206,12 +215,11 @@
         >
           <div class="rounded-lg bg-(--accent) p-12 order-1 lg:order-2 transition-all">
             <h2 class="text-4xl font-bold mb-6 font-playfair animate-fade-in-up">
-              Lorem, ipsum dolor.
+              Become A Franchisee
             </h2>
             <p class="text-lg mb-8 animate-fade-in-up" style="animation-delay: 0.1s;">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore error impedit
-              molestias, pariatur repudiandae doloremque? Saepe quam numquam vel veritatis
-              voluptates dolore exercitationem molestiae id. Deserunt, temporibus aperiam!
+              Embark on a journey to entrepreneurship by joining our franchise network. We support
+              individuals across South Africa.
             </p>
             <a
               class="inline-flex items-center justify-center gap-2 text-sm [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 font-bold uppercase tracking-wide transition-all hover:scale-105 h-11 rounded-md px-8 bg-(--bg)"
@@ -281,6 +289,8 @@
       </div>
     </div>
   </div>
+
+  <Footer />
 </main>
 
 <style>
