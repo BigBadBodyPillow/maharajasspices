@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import maharajaspicesLogo from '../assets/logo-main-fcbb9625.webp';
   import searchIcon from '../assets/icons/mynaui--search.svg?raw';
   import cartIcon from '../assets/icons/mdi--cart.svg?raw';
@@ -6,6 +6,10 @@
   import recentIcon from '../assets/icons/material-symbols--history.svg?raw';
   import logInIcon from '../assets/icons/material-symbols--person.svg?raw';
   import chevronIcon from '../assets/icons/glyphs--chevron-bold.svg?raw';
+
+  export let onNavigate: (view: string) => void = () => {};
+  export let cartCount = 0;
+  export let userLabel = 'Log in / Register';
 </script>
 
 <header class=" top-0 bg-(--bg)">
@@ -33,13 +37,17 @@
   </div>
 
   <div class="main-header box mx-auto p-4 flex items-center justify-between gap-2 sm:gap-4">
-    <a href="/" class="gap-2 flex items-center shrink-0 animate-fade-in">
+    <button
+      type="button"
+      class="gap-2 flex items-center shrink-0 animate-fade-in"
+      onclick={() => onNavigate('home')}
+    >
       <img
         src={maharajaspicesLogo}
         alt="Maharajas Spices Logo"
         class="h-16 sm:h-20 md:h-28 lg:h-32 w-auto hover:scale-110 transition-transform duration-300"
       />
-    </a>
+    </button>
 
     <div class="hidden md:flex flex-1 max-w-2xl mx-4">
       <div class="w-full relative">
@@ -75,17 +83,36 @@
     </div>
 
     <div class="button-group flex gap-4 items-center">
-      <a href="/" class="[&_svg]:size-6 [&_svg]:shrink-0">{@html cartIcon}</a>
-      <a href="/" class="[&_svg]:size-6 [&_svg]:shrink-0">{@html favouriteIcon}</a>
-      <a href="/" class="[&_svg]:size-6 [&_svg]:shrink-0">{@html recentIcon}</a>
-      <a href="/" class="[&_svg]:size-6 [&_svg]:shrink-0 flex flex-col items-center">
+      <button
+        type="button"
+        class="relative [&_svg]:size-6 [&_svg]:shrink-0"
+        onclick={() => onNavigate('cart')}
+      >
+        {@html cartIcon}
+        {#if cartCount > 0}
+          <span
+            class="absolute -right-3.5 -top-3 rounded-full bg-(--accent) leading-5 w-6 h-6 px-1.5 text-[14px] font-bold text-white"
+          >
+            {cartCount}
+          </span>
+        {/if}
+      </button>
+      <button type="button" class="[&_svg]:size-6 [&_svg]:shrink-0">
+        {@html favouriteIcon}
+      </button>
+      <button type="button" class="[&_svg]:size-6 [&_svg]:shrink-0">
+        {@html recentIcon}
+      </button>
+      <button
+        type="button"
+        class="flex flex-col items-center [&_svg]:size-6 [&_svg]:shrink-0"
+        onclick={() => onNavigate('auth')}
+      >
         {@html logInIcon}
-        <span
-          class="text-[8px] md:text-[10px] lg:text-xs mt-0.5 sm:mt-1 leading-tight sm:block text-center"
-        >
-          Log in <br /> Register
+        <span class="mt-0.5 text-[8px] leading-tight text-center sm:mt-1 md:text-[10px] lg:text-xs">
+          {userLabel}
         </span>
-      </a>
+      </button>
     </div>
   </div>
 

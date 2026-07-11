@@ -12,8 +12,6 @@
   };
 
   export let images: HeroImage[] = [];
-  export let imageWidth = 300;
-  export let imageSpacing = 20;
   export let speed = 500;
 
   const AUTO_ROTATE_DELAY = 3000;
@@ -92,7 +90,6 @@
         src={image.path}
         alt={image.id}
         id={image.id}
-        style={`width:${imageWidth}px; margin: 0 ${imageSpacing}px;`}
         animate:flip={{ duration: speed }}
         loading="lazy"
       />
