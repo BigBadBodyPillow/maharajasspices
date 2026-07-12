@@ -15,11 +15,11 @@
   export let onAdd: (product: Product) => void;
 </script>
 
-<article class="rounded-2xl bg-white p-6 border border-black/10 group">
+<article class="rounded-2xl bg-white p-6 border border-black/10 group w-fit max-md:w-full">
   <img
     src={product.image}
     alt={product.name}
-    class="rounded-lg object-cover transition-transform duration-300 group-hover:scale-104"
+    class="rounded-lg w-100 h-100 max-md:w-full object-cover transition-transform duration-300 group-hover:scale-104"
   />
   <h3 class="mt-4 text-xs font-semibold tracking-[0.2em] text-[#737373]">Brand: {product.brand}</h3>
   <h3

@@ -4,22 +4,20 @@
   import Hero from './lib/Hero.svelte';
   import Brand from './lib/Brand.svelte';
   import Footer from './lib/Footer.svelte';
-  import ProductItem from './lib/ProductItem.svelte';
   import CartItem from './lib/CartItem.svelte';
-
-  type Category = 'books' | 'pens' | 'phones';
-
-  interface Product {
-    id: string;
-    image: string;
-    name: string;
-    brand: string;
-    price: number;
-  }
-
-  interface CartItem extends Product {
-    quantity: number;
-  }
+  import BooksPage from './pages/BooksPage.svelte';
+  import PensPage from './pages/PensPage.svelte';
+  import PhonesPage from './pages/PhonesPage.svelte';
+  import CheckoutPage from './pages/CheckoutPage.svelte';
+  import HomePage from './pages/HomePage.svelte';
+  import AuthPage from './pages/AuthPage.svelte';
+  import CartPage from './pages/CartPage.svelte';
+  import {
+    productCatalog,
+    type Category,
+    type Product,
+    type CartItem as CartItemType
+  } from './lib/products';
 
   const images = [
     {
@@ -42,88 +40,12 @@
     }
   ];
 
-  const productCatalog: Record<Category, Product[]> = {
-    books: [
-      {
-        id: 'book-1',
-        image: 'https://picsum.photos/400/400',
-        brand: 'idk',
-        name: 'Book 1',
-        price: 180
-      },
-      {
-        id: 'book-2',
-        image: 'https://picsum.photos/400/400',
-        brand: 'idk',
-        name: 'Book 2',
-        price: 220
-      },
-      {
-        id: 'book-3',
-        image: 'https://picsum.photos/400/400',
-        brand: 'idk',
-        name: 'Book 3',
-        price: 150
-      }
-    ],
-    pens: [
-      {
-        id: 'pen-1',
-        image: 'https://picsum.photos/400/400',
-        brand: 'idk',
-        name: 'Pen 1',
-        price: 95
-      },
-      {
-        id: 'pen-2',
-        image: 'https://picsum.photos/400/400',
-        brand: 'idk',
-        name: 'Pen 2',
-        price: 120
-      },
-      {
-        id: 'pen-3',
-        image: 'https://picsum.photos/400/400',
-        brand: 'idk',
-        name: 'Pen 3',
-        price: 210
-      }
-    ],
-    phones: [
-      {
-        id: 'phone-1',
-        image: 'https://picsum.photos/400/400',
-        brand: 'idk',
-        name: 'Phone 1',
-        price: 5899
-      },
-      {
-        id: 'phone-2',
-        image: 'https://picsum.photos/400/400',
-        brand: 'idk',
-        name: 'Phone 2',
-        price: 11899
-      },
-      {
-        id: 'phone-3',
-        image: 'https://picsum.photos/400/400',
-        brand: 'idk',
-        name: 'Phone 3',
-        price: 16899
-      }
-    ]
-  };
-
-  type View = 'home' | 'auth' | 'cart' | Category;
+  type View = 'home' | 'auth' | 'cart' | 'checkout' | Category;
 
   let currentView: View = 'home';
-  let authMode: 'login' | 'register' = 'login';
-  let fullName: string = '';
-  let email: string = '';
-  let password: string = '';
-  let confirmPassword: string = '';
-  let isLoggedIn: boolean = false;
-  let cart: CartItem[] = [];
+  let isLoggedIn = false;
+  let fullName = '';
+  let cart: CartItemType[] = [];
 
   let activeCategory: Category;
   $: activeCategory =
@@ -131,53 +53,21 @@
       ? (currentView as Category)
       : 'books';
 
-  let cartCount: number = 0;
   $: cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  let cartTotal: number = 0;
   $: cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   function navigate(view: string) {
     currentView = view as View;
   }
 
-  function toggleAuthMode(mode: 'login' | 'register') {
-    authMode = mode;
-  }
-
-  function handleAuthSubmit() {
-    if (!email || !password) {
-      alert('Please complete the form.');
-      return;
-    }
-
-    if (authMode === 'register' && password !== confirmPassword) {
-      alert('Passwords do not match.');
-      return;
-    }
-
-    isLoggedIn = true;
-    fullName = authMode === 'register' && fullName ? fullName : 'Guest Shopper';
-    currentView = 'home';
-    alert(authMode === 'login' ? 'Logged in successfully.' : 'Account created successfully.');
-  }
-
   function addToCart(product: Product) {
-    const existing = cart.find((item) => item.id === product.id);
-
+    const existing = cart.find((c) => c.id === product.id);
     if (existing) {
       existing.quantity += 1;
       cart = [...cart];
     } else {
       cart = [...cart, { ...product, quantity: 1 }];
     }
-
-    console.log('Added to cart', {
-      product: product.name,
-      price: product.price,
-      quantity: existing ? existing.quantity : 1,
-      amount: product.price * (existing ? existing.quantity : 1)
-    });
   }
 
   function updateQuantity(id: string, delta: number) {
@@ -189,7 +79,7 @@
   }
 
   function removeFromCart(id: string) {
-    cart = cart.filter((item) => item.id !== id);
+    cart = cart.filter((i) => i.id !== id);
   }
 
   function checkout() {
@@ -197,24 +87,31 @@
       alert('Your cart is empty.');
       return;
     }
-
-    const purchasedProducts = cart.map((item) => ({
-      product: item.name,
-      quantity: item.quantity,
-      price: item.price,
-      lineTotal: item.quantity * item.price
-    }));
-
-    console.log('Checkout summary', {
-      price: purchasedProducts,
-      productsPurchased: purchasedProducts.map((item) => item.product),
-      amount: cartTotal
-    });
-
-    alert('Your order has been placed.');
-    cart = [];
-    currentView = 'home';
+    currentView = 'checkout';
   }
+
+  // function handlePlaceOrder(payload: {
+  //   address: any | null;
+  //   deliveryType: 'courier' | 'pickup';
+  //   courierCost: number;
+  // }) {
+  //   const purchasedProducts = cart.map((item) => ({
+  //     product: item.name,
+  //     quantity: item.quantity,
+  //     price: item.price,
+  //     lineTotal: item.quantity * item.price
+  //   }));
+  //   console.log('Order placed', {
+  //     deliveryType: payload.deliveryType,
+  //     courierCost: payload.courierCost,
+  //     address: payload.address,
+  //     items: purchasedProducts,
+  //     total: cartTotal + payload.courierCost
+  //   });
+  //   alert('Your order has been placed successfully.');
+  //   cart = [];
+  //   currentView = 'home';
+  // }
 </script>
 
 <main>
@@ -297,95 +194,13 @@
       </div>
     </div>
   {:else if currentView === 'auth'}
-    <section class="bg-[#f5f5f5] px-4 py-16">
-      <div class="box mx-auto grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <div class="rounded-2xl bg-white p-8 shadow-sm">
-          <p class="text-sm font-semibold uppercase tracking-[0.2em] text-(--accent)">Accounts</p>
-          <h2 class="mt-2 text-3xl font-bold text-black">
-            {authMode === 'login' ? 'Log in to your account' : 'Create your account'}
-          </h2>
-          <p class="mt-3 text-sm text-black/70">
-            {authMode === 'login'
-              ? 'Access your saved carts and checkout faster.'
-              : 'Register in seconds and keep shopping with one click.'}
-          </p>
-
-          <form
-            class="mt-8 space-y-4"
-            onsubmit={(e) => {
-              e.preventDefault;
-              handleAuthSubmit;
-            }}
-          >
-            {#if authMode === 'register'}
-              <input
-                bind:value={fullName}
-                type="text"
-                placeholder="Full name"
-                class="w-full rounded-lg border border-black/10 px-4 py-3 text-black"
-              />
-            {/if}
-            <input
-              bind:value={email}
-              type="email"
-              placeholder="Email address"
-              class="w-full rounded-lg border border-black/10 px-4 py-3 text-black"
-            />
-            <input
-              bind:value={password}
-              type="password"
-              placeholder="Password"
-              class="w-full rounded-lg border border-black/10 px-4 py-3 text-black"
-            />
-            {#if authMode === 'register'}
-              <input
-                bind:value={confirmPassword}
-                type="password"
-                placeholder="Confirm password"
-                class="w-full rounded-lg border border-black/10 px-4 py-3 text-black"
-              />
-            {/if}
-            <button
-              type="submit"
-              class="w-full rounded-lg bg-(--accent) px-4 py-3 text-sm font-semibold uppercase text-white"
-            >
-              {authMode === 'login' ? 'Log In' : 'Register'}
-            </button>
-          </form>
-
-          <div class="mt-5 text-sm text-black/70">
-            {#if authMode === 'login'}
-              <span>Need an account?</span>
-              <button
-                type="button"
-                class="ml-2 font-semibold text-(--accent)"
-                onclick={() => toggleAuthMode('register')}
-              >
-                Create one
-              </button>
-            {:else}
-              <span>Already have an account?</span>
-              <button
-                type="button"
-                class="ml-2 font-semibold text-(--accent)"
-                onclick={() => toggleAuthMode('login')}
-              >
-                Log in
-              </button>
-            {/if}
-          </div>
-        </div>
-
-        <div class="rounded-2xl bg-(--accent) p-8 text-white shadow-sm">
-          <h3 class="text-2xl font-bold">Why shop with us</h3>
-          <ul class="mt-6 space-y-4 text-sm text-white/90">
-            <li>• Secure checkout and account-based order history</li>
-            <li>• Fast category browsing for books, pens and phones</li>
-            <li>• Flexible cart updates and real-time checkout totals</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+    <AuthPage
+      onLogin={(name) => {
+        isLoggedIn = true;
+        fullName = name || 'Guest';
+        currentView = 'home';
+      }}
+    />
   {:else if currentView === 'cart'}
     <section class="bg-white px-4 py-16">
       <div class="box mx-auto rounded-2xl bg-white p-8">
@@ -440,7 +255,7 @@
             <div
               class="flex flex-col gap-6 mt-8 rounded-2xl border border-black/10 p-6 text-black w-full md:w-125 h-fit"
             >
-              <h2>Order Summary</h2>
+              <h2 class="text-xl font-bold">Order Summary</h2>
               <hr class=" text-black/10" />
               <div class="flex items-center justify-between text-lg font-semibold">
                 <span>Subotal: </span>
@@ -465,42 +280,14 @@
         {/if}
       </div>
     </section>
-  {:else if currentView === 'books' || currentView === 'pens' || currentView === 'phones'}
-    <section class=" bg-white px-4 py-16">
-      <div class="box mx-auto flex gap-8">
-        <aside class="categories text-black border border-black/10 rounded-md p-6 space-y-8">
-          <h2 class="text-xl font-semibold uppercase">categories</h2>
-          <div class="button-group flex flex-col">
-            <button
-              class=" rounded-sm hover:bg-[#f5f5f5] px-4 py-2 text-left font-bold"
-              style={currentView ? 'background-color: var(--accent); color:white;' : ''}
-              onclick={() => navigate('books')}>Books</button
-            >
-            <button
-              class=" rounded-sm hover:bg-[#f5f5f5] px-4 py-2 text-left font-bold"
-              style={currentView === 'pens' ? 'background-color: var(--accent); color:white;' : ''}
-              onclick={() => navigate('pens')}>Pens</button
-            >
-            <button
-              class=" rounded-sm hover:bg-[#f5f5f5] px-4 py-2 text-left font-bold"
-              style={currentView === 'phones'
-                ? 'background-color: var(--accent); color:white;'
-                : ''}
-              onclick={() => navigate('phones')}>Phones</button
-            >
-          </div>
-        </aside>
-        <div class=" grid gap-8">
-          <div>
-            <div class="grid gap-6 md:grid-cols-2">
-              {#each productCatalog[activeCategory] as product}
-                <ProductItem {product} onAdd={addToCart} />
-              {/each}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  {:else if currentView === 'books'}
+    <BooksPage products={productCatalog.books} onAdd={addToCart} onNavigate={navigate} />
+  {:else if currentView === 'pens'}
+    <PensPage products={productCatalog.pens} onAdd={addToCart} onNavigate={navigate} />
+  {:else if currentView === 'phones'}
+    <PhonesPage products={productCatalog.phones} onAdd={addToCart} onNavigate={navigate} />
+  {:else if currentView === 'checkout'}
+    <CheckoutPage {cart} {cartTotal} />
   {/if}
 
   <Footer />

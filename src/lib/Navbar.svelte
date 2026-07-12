@@ -59,7 +59,7 @@
   }
 
   @media (max-width: 768px) {
-    nav button {
+    nav button:not(#browse) {
       display: none;
     }
   }
