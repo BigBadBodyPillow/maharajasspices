@@ -73,7 +73,7 @@
 </script>
 
 <section class="bg-[#f5f5f5] px-4 py-16">
-  <div class="box mx-auto rounded-lg bg-white p-8 border border-black/10 max-w-125">
+  <div class="box mx-auto rounded-lg bg-white p-8 border border-black/10 max-w-125!">
     <h2 class="text-2xl font-semibold text-center text-(--accent)">Welcome</h2>
     <p class="text-md text-center text-black/50">Sign in to your account or create a new one</p>
 
