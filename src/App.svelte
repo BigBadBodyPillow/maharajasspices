@@ -245,7 +245,7 @@
           </div>
         {:else}
           <h2 class="text-black text-3xl font-bold">Shopping Cart</h2>
-          <div class=" flex gap-12">
+          <div class=" flex gap-12 max-md:flex-col">
             <div class="mt-8 space-y-4 w-full">
               {#each cart as item}
                 <CartItem {item} onUpdate={updateQuantity} onRemove={removeFromCart} />

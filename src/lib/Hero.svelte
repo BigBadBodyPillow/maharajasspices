@@ -90,22 +90,27 @@
         src={image.path}
         alt={image.id}
         id={image.id}
+        class="h-full w-full object-cover"
         animate:flip={{ duration: speed }}
         loading="lazy"
       />
     {/each}
   </div>
 
-  <div class="w-full h-full absolute top-0">
+  <div class="absolute top-0 h-full w-full">
     <div class="hero-text box mx-auto h-full">
-      <div class="mx-25 h-full flex flex-col justify-center gap-4 animate-fade-in">
-        <div>
-          <h1 class="text-4xl font-bold">{currentImage?.heading ?? 'Lorem, ipsum dolor.'}</h1>
-          <p class="text-xl">
+      <div
+        class="mx-4 flex h-full flex-col justify-center gap-4 py-8 animate-fade-in sm:mx-8 sm:py-10 md:mx-12 md:py-12 lg:mx-25"
+      >
+        <div class="max-w-xl">
+          <h1 class="text-3xl font-bold sm:text-4xl">
+            {currentImage?.heading ?? 'Lorem, ipsum dolor.'}
+          </h1>
+          <p class="mt-2 text-base sm:text-xl">
             {currentImage?.p ?? 'Lorem ipsum, dolor sit amet consectetur adipisicing elit.'}
           </p>
         </div>
-        <button class="bg-(--accent) font-bold w-fit px-4 py-2 rounded-md">SHOP NOW</button>
+        <button class="w-fit rounded-md bg-(--accent) px-4 py-2 font-bold">SHOP NOW</button>
       </div>
     </div>
   </div>
@@ -140,12 +145,20 @@
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+    min-height: 22rem;
   }
   #carousel-images {
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
+    min-height: 100%;
     filter: opacity(50%);
+  }
+
+  #carousel-images img {
+    flex: 0 0 100%;
+    min-height: 22rem;
+    object-fit: cover;
   }
 
   .control {

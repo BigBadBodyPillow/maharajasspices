@@ -17,7 +17,7 @@
   export let onRemove: (id: string) => void;
 </script>
 
-<div class="flex flex-row items-center gap-3 rounded-2xl border border-black/10 p-4">
+<div class="flex flex-row items-center gap-3 rounded-2xl border border-black/10 p-4 max-sm:p-2">
   <img
     src={item.image}
     alt={item.name}
@@ -29,7 +29,7 @@
       <p class="font-bold text-(--accent)">R{item.price}</p>
     </div>
 
-    <div class="flex items-center gap-3 h-fit">
+    <div class="flex items-center gap-3 h-fit max-sm:gap-1">
       <div class="border border-black/10 rounded-sm flex items-center gap-0">
         <button
           class="rounded-sm w-10 h-10 px-3 py-1 text-black hover:bg-amber-400 font-bold"
@@ -47,7 +47,7 @@
       </div>
       <button
         type="button"
-        class="flex rounded-sm gap-2 hover:bg-amber-400 px-3 py-2 text-sm text-(--accent) [&_svg]:size-6 [&_svg]:shrink-0"
+        class="flex rounded-sm gap-2 max-sm:gap-1 hover:bg-amber-400 px-3 py-2 max-sm:px-0 max-sm:py-1 text-sm text-(--accent) [&_svg]:size-6 [&_svg]:shrink-0"
         onclick={() => onRemove(item.id)}
       >
         {@html binIcon}
