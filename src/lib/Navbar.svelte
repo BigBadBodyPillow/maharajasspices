@@ -1,7 +1,31 @@
 <script lang="ts">
   import menuIcon from '../assets/icons/material-symbols--menu.svg?raw';
+  import { onMount } from 'svelte';
 
   export let onNavigate: (view: string) => void = () => {};
+
+  let popoverElement: HTMLElement;
+  let browseButton: HTMLElement;
+
+  onMount(() => {
+    popoverElement = document.getElementById('categories-popover') as HTMLElement;
+    browseButton = document.getElementById('browse') as HTMLElement;
+
+    // Handle click outside to close popover
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popoverElement?.matches(':popover-open')) {
+        if (
+          !popoverElement.contains(e.target as Node) &&
+          !browseButton.contains(e.target as Node)
+        ) {
+          popoverElement.hidePopover();
+        }
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  });
 </script>
 
 <nav class="bg-(--accent) w-full h-fit">
@@ -54,13 +78,30 @@
   }
 
   #categories-popover {
+    position: fixed;
+    inset: auto auto auto auto;
+  }
+
+  #categories-popover:popover-open {
     position-anchor: --categories;
     position-area: bottom center;
+    top: anchor(bottom) !important;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0.5rem;
   }
 
   @media (max-width: 768px) {
     nav button:not(#browse) {
       display: none;
+    }
+
+    #categories-popover:popover-open {
+      position: fixed;
+      width: 160px;
+      right: auto;
+      left: 1rem;
+      transform: none;
     }
   }
 </style>
